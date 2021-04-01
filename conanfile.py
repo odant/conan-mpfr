@@ -30,7 +30,7 @@ class MpfrConan(ConanFile):
         "patches/4.1.0-0001-windows-allow-mixed-shared-static.patch",
         "patches/4.1.0-0002-windows-header-dll.patch"
     ]
-    exports_sources = "src/*", "patches/*", "CMakeLists.txt.in"
+    exports_sources = "src/*", "patches/*", "CMakeLists.txt.in", "Findmpfr.cmake"
     generators = "cmake"
 
     _autotools = None
@@ -152,6 +152,7 @@ class MpfrConan(ConanFile):
             autotools.make(args=["V=0"])
 
     def package(self):
+        self.copy("Findmpfr.cmake", src=".", dst=".")
         self.copy("COPYING", dst="licenses", src=self._source_subfolder)
         if self.settings.os == "Windows":
             cmake = self._configure_cmake()
