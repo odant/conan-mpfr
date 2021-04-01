@@ -22,7 +22,7 @@ class MpfrConan(ConanFile):
         "exact_int": ["mpir", "gmp",]
     }
     default_options = {
-        "shared": False,
+        "shared": True,
         "fPIC": True,
         "exact_int": "mpir",
     }
