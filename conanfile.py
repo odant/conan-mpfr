@@ -58,6 +58,17 @@ class MpfrConan(ConanFile):
         if tools.os_info.is_windows and not tools.get_env("CONAN_BASH_PATH"):
             self.build_requires("cygwin_installer/2.9.0@bincrafters/stable")
 
+    def source(self):
+        if not tools.os_info.is_windows:
+            # Executable permisions on Unix
+            scripts = [
+                "src/install-sh", "src/ltmain.sh", "src/compile", "src/configure", "src/config.guess", "src/config.sub",
+                "src/depcomp", "src/missing", "src/test-driver", "src/ar-lib", "src/tools/ck-clz_tab", "src/tools/ck-copyright-notice",
+                "src/tools/ck-mparam", "src/tools/get_patches.sh"
+            ]
+            for script in scripts:
+                self.run("chmod a+x %s" % os.path.join(self.source_folder, script))
+
     def _configure_autotools(self):
         if self._autotools:
             return self._autotools
