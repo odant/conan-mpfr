@@ -149,33 +149,23 @@ class MpfrConan(ConanFile):
             tools.save("gmp.h", "#pragma once\n#include <mpir.h>\n")
         with self._build_context():
             autotools = self._configure_autotools()
-        if self.settings.os == "Windows":
-            cmakelists_in = tools.load("CMakeLists.txt.in")
-            sources, headers, definitions = self._extract_mpfr_autotools_variables()
-            tools.save(os.path.join(self._source_subfolder, "src", "CMakeLists.txt"), cmakelists_in.format(
-                mpfr_sources=" ".join(sources),
-                mpfr_headers=" ".join(headers),
-                definitions=" ".join(definitions),
-            ))
-            cmake = self._configure_cmake()
-            cmake.build()
-        else:
-            autotools.make(args=["V=0"])
+        cmakelists_in = tools.load("CMakeLists.txt.in")
+        sources, headers, definitions = self._extract_mpfr_autotools_variables()
+        tools.save(os.path.join(self._source_subfolder, "src", "CMakeLists.txt"), cmakelists_in.format(
+            mpfr_sources=" ".join(sources),
+            mpfr_headers=" ".join(headers),
+            definitions=" ".join(definitions),
+        ))
+        cmake = self._configure_cmake()
+        cmake.build()
 
     def package(self):
         self.copy("Findmpfr.cmake", src=".", dst=".")
         self.copy("COPYING", dst="licenses", src=self._source_subfolder)
-        if self.settings.os == "Windows":
-            cmake = self._configure_cmake()
-            cmake.install()
-        else:
-            autotools = self._configure_autotools()
-            autotools.install()
-            os.unlink(os.path.join(self.package_folder, "lib", "libmpfr.la"))
-            tools.rmdir(os.path.join(self.package_folder, "share"))
-            tools.rmdir(os.path.join(self.package_folder, "lib", "pkgconfig"))
+        cmake = self._configure_cmake()
+        cmake.install()
 
     def package_info(self):
-        self.cpp_info.libs = ["mpfr"]
+        self.cpp_info.libs = tools.collect_libs(self)
         if self.settings.os == "Windows" and self.options.shared:
             self.cpp_info.defines = ["MPFR_DLL"]
