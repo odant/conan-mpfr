@@ -8,7 +8,7 @@ import shlex
 
 class MpfrConan(ConanFile):
     name = "mpfr"
-    version = "4.1.0+1"
+    version = "4.1.0+2"
     description = "The MPFR library is a C library for multiple-precision floating-point computations with " \
                   "correct rounding"
     topics = ("conan", "mpfr", "multiprecision", "math", "mathematics")
